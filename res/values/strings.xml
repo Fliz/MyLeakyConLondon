@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">My LeakyCon London</string>
+    <string name="event_name">Name:</string>
+    <string name="event_description">Description:</string>
+    <string name="event_location">Location:</string>
+    <string name="delete_event">Delete Event</string>
+    <string name="event_startdate">Start Date</string>
+    <string name="event_date">Set Start Date</string>
+    <string name="event_enddate">End Date</string>
+    <string name="event_time">Set Start Time</string>
+    <string name="event_end_date">Set End Date</string>
+    <string name="event_end_time">Set End Time</string>
+    <string name="dont_delete_event">Don\'t Delete Event</string>
+    <string name="detail_cancel">Cancel</string>
+    <string name="detail_types">Event Type:</string>
+    <string name="detail_backup">Backup Event:</string>
+    <string name="detail_save">Save</string>
+    <string name="add_event">Add Event</string>
+    <string-array name="types_array">
+        <item>Panel</item>
+        <item>Show</item>
+        <item>Ball</item>
+        <item>Feast</item>
+        <item>Concert</item>
+        <item>Special Event</item>
+        <item>Signing</item>
+        <item>Meet-up</item>
+        <item>Discussion</item>
+        <item>Workshop</item>
+        <item>Podcast</item>
+        <item>Other</item>
+    </string-array>
+</resources>
