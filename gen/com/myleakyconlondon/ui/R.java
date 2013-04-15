@@ -17,7 +17,7 @@ public final class R {
         public static final int icon=0x7f020000;
     }
     public static final class id {
-        public static final int addEvent=0x7f060011;
+        public static final int addEvent=0x7f060012;
         public static final int delete_event=0x7f060009;
         public static final int detail_backup=0x7f060008;
         public static final int detail_description=0x7f060001;
@@ -31,6 +31,7 @@ public final class R {
         public static final int eventStartDate=0x7f06000e;
         public static final int eventTitle=0x7f06000c;
         public static final int events=0x7f060010;
+        public static final int events_fragment=0x7f060011;
         public static final int set_EndDate=0x7f060004;
         public static final int set_EndTime=0x7f060005;
         public static final int set_StartDate=0x7f060002;
@@ -40,7 +41,7 @@ public final class R {
         public static final int event_detail=0x7f030000;
         public static final int event_list_item=0x7f030001;
         public static final int events=0x7f030002;
-        public static final int menu=0x7f030003;
+        public static final int main=0x7f030003;
     }
     public static final class string {
         public static final int add_event=0x7f040010;

@@ -21,5 +21,6 @@ public abstract class DataContract implements BaseColumns {
         public static final String IS_BACKUP_EVENT= "isBackUpEvent";
         public static final String BACKUP_EVENT_ID = "backUpEventId";
 
+        public static final String[] COLUMNS = {EVENT_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, LOCATION, TYPE, IS_BACKUP_EVENT, BACKUP_EVENT_ID};
     }
 }
