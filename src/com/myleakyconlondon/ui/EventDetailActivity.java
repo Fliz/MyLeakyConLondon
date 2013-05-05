@@ -86,7 +86,7 @@ public class EventDetailActivity extends FragmentActivity implements TimePickerF
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return dateTime.toString();
+        return new SimpleDateFormat("dd/MM/yyyy HH:mm").format(dateTime);
     }
 
     public void showStartDatePicker(View v) {

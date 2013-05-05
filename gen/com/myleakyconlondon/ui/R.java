@@ -27,7 +27,7 @@ public final class R {
         public static final int details_cancel=0x7f06000a;
         public static final int details_save=0x7f06000b;
         public static final int eventDescription=0x7f06000d;
-        public static final int eventEndDate=0x7f06000f;
+        public static final int eventDuration=0x7f06000f;
         public static final int eventStartDate=0x7f06000e;
         public static final int eventTitle=0x7f06000c;
         public static final int events=0x7f060010;
@@ -54,9 +54,9 @@ public final class R {
         public static final int dont_delete_event=0x7f04000b;
         public static final int event_date=0x7f040006;
         public static final int event_description=0x7f040002;
+        public static final int event_duration=0x7f040007;
         public static final int event_end_date=0x7f040009;
         public static final int event_end_time=0x7f04000a;
-        public static final int event_enddate=0x7f040007;
         public static final int event_location=0x7f040003;
         public static final int event_name=0x7f040001;
         public static final int event_startdate=0x7f040005;

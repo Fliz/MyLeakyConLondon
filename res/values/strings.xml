@@ -7,7 +7,7 @@
     <string name="delete_event">Delete Event</string>
     <string name="event_startdate">Start Date</string>
     <string name="event_date">Set Start Date</string>
-    <string name="event_enddate">End Date</string>
+    <string name="event_duration">Duration</string>
     <string name="event_time">Set Start Time</string>
     <string name="event_end_date">Set End Date</string>
     <string name="event_end_time">Set End Time</string>

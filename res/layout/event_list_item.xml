@@ -7,7 +7,6 @@
               android:orientation="vertical"
               android:paddingLeft="10dp"
               android:paddingRight="10dp" >
-
     <TextView
             android:id="@+id/eventTitle"
             android:layout_width="wrap_content"
@@ -30,11 +29,11 @@
             android:text="@string/event_startdate"
             android:textAppearance="?android:attr/textAppearanceSmall" />
     <TextView
-            android:id="@+id/eventEndDate"
+            android:id="@+id/eventDuration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="@string/event_enddate"
+            android:text="@string/event_duration"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </LinearLayout>

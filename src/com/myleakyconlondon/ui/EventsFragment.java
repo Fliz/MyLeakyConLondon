@@ -1,5 +1,7 @@
 package com.myleakyconlondon.ui;
 
+import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 import com.myleakyconlondon.adapter.EventCursorAdapter;
 import com.myleakyconlondon.dao.DataContract;
 import com.myleakyconlondon.dao.EventProvider;
@@ -24,11 +27,13 @@ import com.myleakyconlondon.dao.EventProvider;
 public class EventsFragment extends Fragment  implements AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor>{
 
     EventCursorAdapter eventCursorAdapter;
+    private Activity context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        this.context = getActivity();
         getLoaderManager().initLoader(EVENT_LOADER, null, this);
     }
 
@@ -82,12 +87,13 @@ public class EventsFragment extends Fragment  implements AdapterView.OnItemSelec
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        //todo implement
+
+        Toast.makeText(context, "this is my Toast message!!! =) clicked", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        //todo implement
+        Toast.makeText(context, "this is my Toast message!!! =) selected", Toast.LENGTH_LONG).show();
     }
 
     @Override
