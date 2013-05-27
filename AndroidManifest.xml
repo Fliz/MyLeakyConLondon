@@ -12,7 +12,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".EventDetailActivity" />
         <provider
                 android:name="com.myleakyconlondon.dao.EventProvider" android:authorities="com.myleakyconlondon.dao.EventProvider"
                 android:exported="false" />

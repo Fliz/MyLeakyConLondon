@@ -8,9 +8,7 @@ import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.widget.*;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * User: Elizabeth Hamlet
@@ -28,16 +26,20 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
     @Override
     public void onAttach(Activity activity) {
+        Log.i("test", "activity " + activity);
         super.onAttach(activity);
         try {
             dListener = (OnDateSelectedListener) activity;
+
         } catch (ClassCastException e) {
+            Log.i("test", "exception " + e);
             throw new ClassCastException(activity.toString() + " must implement OnDateSelectedListener");
         }
     }
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+        //todo get saved value
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
@@ -48,6 +50,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
     @Override
     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+
         //todo use string builder and display in suitable format for changing
         dListener.onDateSelected(datePicker.getDayOfMonth() + "/" + datePicker.getMonth() + "/" + datePicker.getYear(), buttonId);
     }

@@ -150,17 +150,6 @@
             android:paddingTop="15dp" >
 
         <Button
-                android:id="@+id/details_cancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/detail_cancel"
-                android:width="145dp"
-                android:onClick="eventHome">
-
-            <requestFocus />
-        </Button>
-
-        <Button
                 android:id="@+id/details_save"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
