@@ -1,13 +1,16 @@
 package com.myleakyconlondon.ui;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import com.myleakyconlondon.dao.DataContract;
 import com.myleakyconlondon.model.Event;
+import com.myleakyconlondon.model.EventDao;
 
 /**
  * User: Elizabeth Hamlet
@@ -22,8 +25,17 @@ public class LeakyConLondonScheduleActivity extends FragmentActivity implements 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.events_fragment, new EventsFragment()).commit();
+        if (savedInstanceState == null) {
+
+            final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.events_fragment, new EventsFragment()).commit();
+        } else {
+            final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.events_fragment, EventDetailFragment.getInstance(null)).commit();
+            EventDetailFragment event_detail_fragment = (EventDetailFragment) getSupportFragmentManager().findFragmentByTag("event_detail_fragment");
+            //todo fix
+        }
+
     }
 
     @Override

@@ -117,8 +117,7 @@ public class EventsFragment extends Fragment implements AdapterView.OnItemSelect
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-        Log.i("TEST", "I have reached selected but not click yet");
-        Toast.makeText(context, "this is my Toast message!!! =) selected", Toast.LENGTH_LONG).show();
+            //do nothing
     }
 
     @Override

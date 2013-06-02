@@ -2,7 +2,6 @@ package com.myleakyconlondon.ui;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -15,10 +14,6 @@ import com.myleakyconlondon.DateHelper;
 import com.myleakyconlondon.dao.DataContract;
 import com.myleakyconlondon.dao.EventProvider;
 import com.myleakyconlondon.model.Event;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * User: Elizabeth
@@ -60,6 +55,7 @@ public class EventDetailFragment extends Fragment {
 
         final View rootView = inflater.inflate(R.layout.event_detail, container, false);
         view = rootView;
+        setRetainInstance(true);
 
         title = (TextView) rootView.findViewById(R.id.detail_name);
         location = (TextView) rootView.findViewById(R.id.detail_location);
@@ -70,8 +66,14 @@ public class EventDetailFragment extends Fragment {
         startTime = (Button) rootView.findViewById(R.id.set_StartTime);
         endTime = (Button) rootView.findViewById(R.id.set_EndTime);
 
-       //todo set up save button to do add or edit/delete
         setTypes();
+
+        if (savedInstanceState != null) {
+            // Restore last state
+            eventId = savedInstanceState.getLong(DataContract.Event.EVENT_ID);
+        } else {
+            eventId = 0;
+        }
 
         if (getArguments() != null) {
 
@@ -86,11 +88,21 @@ public class EventDetailFragment extends Fragment {
             endDate.setText(DateHelper.getFormattedDateFromDateTime(getArguments().getString(DataContract.Event.END_DATE)));
             startTime.setText(DateHelper.getFormattedTimeFromDateTime(getArguments().getString(DataContract.Event.START_DATE)));
             endTime.setText(DateHelper.getFormattedTimeFromDateTime(getArguments().getString(DataContract.Event.END_DATE)));
+        }  else {
+            //hide delete button
+            ToggleButton deleteToggle = (ToggleButton) view.findViewById(R.id.delete_event);
+            deleteToggle.setVisibility(View.GONE);
         }
 
         setUpButtons();
 
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(DataContract.Event.EVENT_ID, eventId);
     }
 
     private void setTypes() {
@@ -142,35 +154,66 @@ public class EventDetailFragment extends Fragment {
                 eventSave();
             }
         });
-
     }
 
     public void eventSave() {
 
-        SaveEvent();
+        ContentValues values = getEventValues();
+
+        if(eventId != 0) {
+            updateOrDelete(values);
+        } else {
+            //Insert
+            getActivity().getContentResolver().insert(EventProvider.CONTENT_URI,values);
+        }
+
         Intent intent = new Intent(getActivity(), LeakyConLondonScheduleActivity.class);
         startActivity(intent);
     }
 
-    private void SaveEvent() {
+    private ContentValues getEventValues() {
 
-        Uri mNewUri;
+        ContentValues values = new ContentValues();
 
-        ContentValues mNewValues = new ContentValues();
         EditText title = (EditText) view.findViewById(R.id.detail_name);
         EditText description = (EditText) view.findViewById(R.id.detail_description);
         EditText location = (EditText) view.findViewById(R.id.detail_location);
         Spinner type = (Spinner) view.findViewById(R.id.detail_types);
 
-        mNewValues.put(DataContract.Event.TITLE, title.getText().toString());
-        mNewValues.put(DataContract.Event.DESCRIPTION, description.getText().toString());
-        mNewValues.put(DataContract.Event.LOCATION, location.getText().toString());
-        mNewValues.put(DataContract.Event.TYPE, type.getSelectedItem().toString());
-        mNewValues.put(DataContract.Event.IS_BACKUP_EVENT, false);
-        mNewValues.put(DataContract.Event.START_DATE, formatDateTime(R.id.set_StartDate, R.id.set_StartTime));
-        mNewValues.put(DataContract.Event.END_DATE, formatDateTime(R.id.set_EndDate, R.id.set_EndTime));
+        values.put(DataContract.Event.TITLE, title.getText().toString());
+        values.put(DataContract.Event.DESCRIPTION, description.getText().toString());
+        values.put(DataContract.Event.LOCATION, location.getText().toString());
+        values.put(DataContract.Event.TYPE, type.getSelectedItem().toString());
+        values.put(DataContract.Event.IS_BACKUP_EVENT, false);
+        values.put(DataContract.Event.START_DATE, formatDateTime(R.id.set_StartDate, R.id.set_StartTime));
+        values.put(DataContract.Event.END_DATE, formatDateTime(R.id.set_EndDate, R.id.set_EndTime));
+        return values;
+    }
 
-        mNewUri =  getActivity().getContentResolver().insert(EventProvider.CONTENT_URI,mNewValues);
+    private void updateOrDelete(ContentValues values) {
+
+        if(isDeleteAction())  {
+            deleteEvent();
+        }   else {
+            //Update
+            getActivity().getContentResolver().update(EventProvider.CONTENT_URI, values, DataContract.Event.EVENT_ID + " = " + eventId, null);
+            Log.i("Info", "Updating event " + eventId);
+        }
+    }
+
+    private  boolean isDeleteAction() {
+
+        ToggleButton deleteToggle = (ToggleButton) view.findViewById(R.id.delete_event);
+        if(deleteToggle.isChecked()) {
+            return true;
+        }
+       return false;
+    }
+
+    private void deleteEvent() {
+
+        getActivity().getContentResolver().delete(EventProvider.CONTENT_URI, DataContract.Event.EVENT_ID + " = " + eventId, null);
+        Log.i("Info", "Deleting event " + eventId);
     }
 
     private String formatDateTime(int dateId, int timeId) {
@@ -197,7 +240,6 @@ public class EventDetailFragment extends Fragment {
     private void setUpDatePicker(int pickerId)  {
 
         DialogFragment newFragment = new DatePickerFragment(pickerId);
-        Log.i("test", "show date..  ");
         newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
     }
 
