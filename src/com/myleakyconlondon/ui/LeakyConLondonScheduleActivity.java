@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import com.myleakyconlondon.DateHelper;
 import com.myleakyconlondon.dao.DataContract;
 import com.myleakyconlondon.model.Event;
 import com.myleakyconlondon.model.EventDao;
@@ -68,7 +69,7 @@ public class LeakyConLondonScheduleActivity extends FragmentActivity implements 
     public void onDateSelected(String date, int buttonId) {
 
         Button dateButton = (Button)findViewById(buttonId);
-        dateButton.setText(date);
+        dateButton.setText(DateHelper.getFormattedDateFromDateTime(date + " 00:00"));
     }
 
 

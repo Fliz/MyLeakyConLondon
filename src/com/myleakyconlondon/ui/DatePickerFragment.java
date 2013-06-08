@@ -9,6 +9,8 @@ import android.util.Log;
 import android.widget.*;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * User: Elizabeth Hamlet
@@ -19,14 +21,17 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
     OnDateSelectedListener dListener;
     int buttonId;
+    Date updateDate;
 
-    public DatePickerFragment(int buttonId) {
-            this.buttonId = buttonId;
+    public DatePickerFragment(int buttonId, Date updateDate) {
+
+        this.buttonId = buttonId;
+        this.updateDate = updateDate;
     }
 
     @Override
     public void onAttach(Activity activity) {
-        Log.i("test", "activity " + activity);
+
         super.onAttach(activity);
         try {
             dListener = (OnDateSelectedListener) activity;
@@ -41,8 +46,12 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
         //todo get saved value
         final Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
+
+        if(updateDate != null) {
+            c.setTime(updateDate);
+        }
         int month = c.get(Calendar.MONTH);
+        int year = c.get(Calendar.YEAR);
         int day = c.get(Calendar.DAY_OF_MONTH);
 
         return new DatePickerDialog(getActivity(), this, year, month, day);
@@ -52,7 +61,8 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
     public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
 
         //todo use string builder and display in suitable format for changing
-        dListener.onDateSelected(datePicker.getDayOfMonth() + "/" + datePicker.getMonth() + "/" + datePicker.getYear(), buttonId);
+        int month =  datePicker.getMonth() + 1;
+        dListener.onDateSelected(datePicker.getDayOfMonth() + "/" + month + "/" + datePicker.getYear(), buttonId);
     }
 
     public interface OnDateSelectedListener {

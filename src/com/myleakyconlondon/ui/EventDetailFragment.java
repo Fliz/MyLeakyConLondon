@@ -15,6 +15,8 @@ import com.myleakyconlondon.dao.DataContract;
 import com.myleakyconlondon.dao.EventProvider;
 import com.myleakyconlondon.model.Event;
 
+import java.util.Date;
+
 /**
  * User: Elizabeth
  * Date: 05/05/13
@@ -119,7 +121,7 @@ public class EventDetailFragment extends Fragment {
         startDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                setUpDatePicker(R.id.set_StartDate);
+                setUpDatePicker(R.id.set_StartDate, DataContract.Event.START_DATE);
             }
         });
 
@@ -127,7 +129,7 @@ public class EventDetailFragment extends Fragment {
         endDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                setUpDatePicker(R.id.set_EndDate);
+                setUpDatePicker(R.id.set_EndDate, DataContract.Event.END_DATE);
             }
         });
 
@@ -204,10 +206,7 @@ public class EventDetailFragment extends Fragment {
     private  boolean isDeleteAction() {
 
         ToggleButton deleteToggle = (ToggleButton) view.findViewById(R.id.delete_event);
-        if(deleteToggle.isChecked()) {
-            return true;
-        }
-       return false;
+        return deleteToggle.isChecked();
     }
 
     private void deleteEvent() {
@@ -237,9 +236,14 @@ public class EventDetailFragment extends Fragment {
         newFragment.show(getActivity().getSupportFragmentManager(), "timePicker");
     }
 
-    private void setUpDatePicker(int pickerId)  {
+    private void setUpDatePicker(int pickerId, String dateName)  {
 
-        DialogFragment newFragment = new DatePickerFragment(pickerId);
+        Date date = null;
+
+        if(getArguments() != null)  {
+            date = DateHelper.getFormattedDate(getArguments().getString(dateName));
+        }
+        DialogFragment newFragment = new DatePickerFragment(pickerId, date);
         newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
     }
 

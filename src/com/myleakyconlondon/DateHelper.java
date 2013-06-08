@@ -16,7 +16,6 @@ public class DateHelper {
 
     public static String GetFormattedDateTime(String date, String time)    {
 
-        Log.i("test", "datetime");
         Date dateTime = getFormattedDate(date + " " + time);
         return new SimpleDateFormat("dd/MM/yyyy HH:mm").format(dateTime);
     }
