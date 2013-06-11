@@ -15,6 +15,7 @@ import com.myleakyconlondon.dao.DataContract;
 import com.myleakyconlondon.dao.EventProvider;
 import com.myleakyconlondon.model.Event;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -215,13 +216,17 @@ public class EventDetailFragment extends Fragment {
         Log.i("Info", "Deleting event " + eventId);
     }
 
-    private String formatDateTime(int dateId, int timeId) {
+    private Long formatDateTime(int dateId, int timeId) {
 
         //todo validate a fix
         Button date = (Button) view.findViewById(dateId);
         Button time = (Button) view.findViewById(timeId);
 
-        return DateHelper.GetFormattedDateTime(date.getText().toString(), time.getText().toString());
+        Date formattedDate = DateHelper.getFormattedDate(date.getText().toString() + " " + time.getText().toString());
+        Calendar c = Calendar.getInstance();
+        c.setTime(formattedDate);
+
+        return c.getTimeInMillis();
     }
 
     public void showStartTimePicker() {

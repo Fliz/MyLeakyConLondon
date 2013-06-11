@@ -18,8 +18,8 @@ public class EventSQLiteHelper extends SQLiteOpenHelper {
                     DataContract.Event.EVENT_ID + " INTEGER PRIMARY KEY," +
                     DataContract.Event.TITLE + TEXT_NOT_NULL +
                     DataContract.Event.DESCRIPTION + TEXT_TYPE +
-                    DataContract.Event.START_DATE + TEXT_NOT_NULL +
-                    DataContract.Event.END_DATE + TEXT_TYPE +
+                    DataContract.Event.START_DATE + " INTEGER," +
+                    DataContract.Event.END_DATE + " INTEGER," +
                     DataContract.Event.LOCATION + TEXT_TYPE +
                     DataContract.Event.TYPE + TEXT_TYPE +
                     DataContract.Event.IS_BACKUP_EVENT + TEXT_TYPE +

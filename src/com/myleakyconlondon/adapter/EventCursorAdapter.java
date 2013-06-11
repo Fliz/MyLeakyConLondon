@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.myleakyconlondon.DateHelper;
 import com.myleakyconlondon.dao.DataContract;
 import com.myleakyconlondon.dao.EventSQLiteHelper;
 import com.myleakyconlondon.ui.R;
@@ -50,35 +51,20 @@ public class EventCursorAdapter extends CursorAdapter {
         eventHolder.startDate = (TextView) row.findViewById(R.id.eventStartDate);
         eventHolder.duration = (TextView) row.findViewById(R.id.eventDuration);
 
-        String startDate = cursor.getString(cursor.getColumnIndex(DataContract.Event.START_DATE));
-        String endDate = cursor.getString(cursor.getColumnIndex(DataContract.Event.END_DATE));
+        Date startDate = new Date(cursor.getLong(cursor.getColumnIndex(DataContract.Event.START_DATE)));
+        Date endDate = new Date(cursor.getLong(cursor.getColumnIndex(DataContract.Event.END_DATE)));
         eventHolder.title.setText(cursor.getString(cursor.getColumnIndex(DataContract.Event.TITLE)));
         eventHolder.description.setText(cursor.getString(cursor.getColumnIndex(DataContract.Event.DESCRIPTION)));
-        eventHolder.startDate.setText(startDate);
+        eventHolder.startDate.setText(DateHelper.formatDateTime(startDate));
         eventHolder.duration.setText(calculateDuration(startDate, endDate));
     }
 
-    private String calculateDuration(String startDate, String endDate) {
+    private String calculateDuration(Date sDate, Date eDate) {
 
-        Date sDate;
-        Date eDate;
-        int hours;
-        int minutes;
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyy HH:mm");
-        try {
-            sDate = sdf.parse(startDate);
-            eDate = sdf.parse(endDate);
-
-            long secs = (eDate.getTime() - sDate.getTime()) / 1000;
-            hours = (int) (secs / 3600);
-            secs = secs % 3600;
-            minutes = (int) (secs / 60);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return e.getMessage();
-        }
+        long secs = (eDate.getTime() - sDate.getTime()) / 1000;
+        int hours = (int) (secs / 3600);
+        secs = secs % 3600;
+        int minutes = (int) (secs / 60);
 
         return hours + " hours " + minutes + " minutes";
     }

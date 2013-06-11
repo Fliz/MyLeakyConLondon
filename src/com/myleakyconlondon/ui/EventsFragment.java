@@ -75,7 +75,7 @@ public class EventsFragment extends Fragment implements AdapterView.OnItemSelect
 
         switch (loaderId) {
             case EVENT_LOADER:
-                cursorLoader = new CursorLoader(getActivity(), EventProvider.CONTENT_URI, DataContract.Event.COLUMNS, null, null, null);
+                cursorLoader = new CursorLoader(getActivity(), EventProvider.CONTENT_URI, DataContract.Event.COLUMNS, null, null, DataContract.Event.START_DATE + " ASC");
                 break;
         }
 
