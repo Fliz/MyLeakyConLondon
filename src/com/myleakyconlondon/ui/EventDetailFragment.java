@@ -240,7 +240,7 @@ public class EventDetailFragment extends Fragment {
         Button time = (Button) view.findViewById(timeId);
 
         String selectedDate = ((Day)date.getSelectedItem()).getDate();
-        Date formattedDate = DateHelper.getFormattedDate(selectedDate + " " + time.getText() != null ? time.getText().toString() : "00:00:00", "dd/MM/yyyy HH:mm");
+        Date formattedDate = DateHelper.getFormattedDate(time.getText() != null ? selectedDate + " " + time.getText().toString() : selectedDate + " 00:00:00", "dd/MM/yyyy HH:mm");
 
         Calendar c = Calendar.getInstance();
         c.setTime(formattedDate);

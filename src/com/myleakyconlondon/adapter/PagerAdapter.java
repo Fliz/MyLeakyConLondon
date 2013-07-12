@@ -14,6 +14,7 @@ import java.util.List;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 
 public class PagerAdapter extends FragmentPagerAdapter {
 
@@ -26,6 +27,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+        Log.i("fix", "getting adapter item " + position);
         return this.fragments.get(position);
     }
 
