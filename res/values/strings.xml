@@ -17,6 +17,13 @@
     <string name="detail_backup">Backup Event:</string>
     <string name="detail_save">Save</string>
     <string name="add_event">Add Event</string>
+    <string name="add_day">Add New Day</string>
+    <string name="save_config">Save Config</string>
+    <string name="dont_delete_day">Don\'t Delete Selected Day</string>
+    <string name="delete_day">Delete Day</string>
+    <string name="event_day">Event Day</string>
+    <string name="config_event">Config</string>
+
     <string-array name="types_array">
         <item>Panel</item>
         <item>Show</item>

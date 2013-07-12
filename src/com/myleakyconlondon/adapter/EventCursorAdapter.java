@@ -7,13 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.myleakyconlondon.DateHelper;
+import com.myleakyconlondon.util.DateHelper;
 import com.myleakyconlondon.dao.DataContract;
-import com.myleakyconlondon.dao.EventSQLiteHelper;
 import com.myleakyconlondon.ui.R;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**

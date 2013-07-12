@@ -8,6 +8,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ import com.myleakyconlondon.dao.EventProvider;
 import com.myleakyconlondon.model.Event;
 import com.myleakyconlondon.model.EventDao;
 
+import java.util.Calendar;
+
 /**
  * User: Elizabeth Hamlet
  * Date: 15/04/13
@@ -28,7 +31,6 @@ import com.myleakyconlondon.model.EventDao;
 public class EventsFragment extends Fragment implements AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private OnEventSelectedListener eventSelectedListener;
-    private OnAddSelectedListener addSelectedListener;
     private EventCursorAdapter eventCursorAdapter;
 
     @Override
@@ -41,16 +43,10 @@ public class EventsFragment extends Fragment implements AdapterView.OnItemSelect
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        Log.i("fix", "setting up event list ");
         final View view = inflater.inflate(R.layout.events, container, false);
         setUpEventsList((ListView) view.findViewById(R.id.events));
 
-        Button add = (Button) view.findViewById(R.id.addEvent);
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                addSelectedListener.onAddSelected();
-            }
-        });
         return view;
     }
 
@@ -58,7 +54,6 @@ public class EventsFragment extends Fragment implements AdapterView.OnItemSelect
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         eventSelectedListener = (OnEventSelectedListener) activity;
-        addSelectedListener = (OnAddSelectedListener) activity;
     }
 
     private void setUpEventsList(ListView eventsList) {
@@ -71,11 +66,22 @@ public class EventsFragment extends Fragment implements AdapterView.OnItemSelect
     @Override
     public Loader<Cursor> onCreateLoader(int loaderId, Bundle bundle) {
 
+        Bundle dayArgs = getArguments();
+
         CursorLoader cursorLoader = null;
 
         switch (loaderId) {
             case EVENT_LOADER:
-                cursorLoader = new CursorLoader(getActivity(), EventProvider.CONTENT_URI, DataContract.Event.COLUMNS, null, null, DataContract.Event.START_DATE + " ASC");
+
+                int dayId = 0;
+
+                Log.i("fix", "day args is " + dayArgs);                   //todo sort of empty wrong day id set....
+                if(dayArgs !=  null) {
+                    Log.i("fix", " hi " +  dayArgs.getInt("dayId"));
+                    dayId = dayArgs.getInt("dayId") ;
+                }
+
+                cursorLoader = new CursorLoader(getActivity(), EventProvider.CONTENT_URI, DataContract.Event.COLUMNS, DataContract.Event.DAY_ID  + " = " + dayId, null, DataContract.Event.START_DATE + " ASC");
                 break;
         }
 
@@ -84,7 +90,7 @@ public class EventsFragment extends Fragment implements AdapterView.OnItemSelect
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-
+        //todo suspect cursor null
         switch (cursorLoader.getId()) {
             case EVENT_LOADER:
                 eventCursorAdapter.changeCursor(cursor);
@@ -121,10 +127,6 @@ public class EventsFragment extends Fragment implements AdapterView.OnItemSelect
 
     public interface OnEventSelectedListener {
         public void onEventSelected(Event selectedEvent);
-    }
-
-    public interface OnAddSelectedListener {
-        public void onAddSelected();
     }
 
     private static final int EVENT_LOADER = 1;

@@ -1,40 +1,43 @@
 package com.myleakyconlondon.dao;
 
-import android.content.*;
+import android.content.ContentProvider;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
-
-import com.myleakyconlondon.dao.DataContract.Event;
+import android.util.Log;
 
 /**
- * User: Elizabeth Hamlet
+ * User: Elizabeth
+ * Date: 23/06/13
+ * Time: 13:29
  */
+public class DaysProvider extends ContentProvider {
 
-public class EventProvider extends ContentProvider {
-
-    private static final String AUTHORITY = "com.myleakyconlondon.dao.EventProvider";
-    private static final String BASE_PATH = "events";
+    private static final String AUTHORITY = "com.myleakyconlondon.dao.DaysProvider";
+    private static final String BASE_PATH = "days";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH);
 
-    private EventSQLiteHelper eventDatabaseHelper;
+    private DaysSQLiteHelper dayDatabaseHelper;
 
     @Override
     public boolean onCreate() {
-        eventDatabaseHelper = new EventSQLiteHelper(getContext());
+        dayDatabaseHelper = new DaysSQLiteHelper(getContext());
         return true;
     }
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
 
-        final SQLiteDatabase eventDatabase = eventDatabaseHelper.getWritableDatabase();
+        final SQLiteDatabase dayDatabase = dayDatabaseHelper.getWritableDatabase();
 
         final String nullColumnHack = null;
-        final long id = eventDatabase.insertWithOnConflict(DataContract.Event.TABLE_NAME, nullColumnHack, values, SQLiteDatabase.CONFLICT_IGNORE);
+        final long id = dayDatabase.insertWithOnConflict(DataContract.Day.TABLE_NAME, nullColumnHack, values, SQLiteDatabase.CONFLICT_IGNORE);
 
         if (id > -1) {
             final Uri insertedId = ContentUris.withAppendedId(CONTENT_URI, id);
@@ -48,12 +51,12 @@ public class EventProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 
-        SQLiteDatabase eventDatabase;
+        SQLiteDatabase dayDatabase;
 
         try {
-            eventDatabase = eventDatabaseHelper.getWritableDatabase();
+            dayDatabase = dayDatabaseHelper.getWritableDatabase();
         } catch (SQLiteException ex) {
-            eventDatabase = eventDatabaseHelper.getReadableDatabase();
+            dayDatabase = dayDatabaseHelper.getReadableDatabase();
         }
         String groupBy = null;
         String having = null;
@@ -63,30 +66,29 @@ public class EventProvider extends ContentProvider {
         switch (URI_MATCHER.match(uri)) {
             case SINGLEROW:
                 final String rowId = uri.getPathSegments().get(1);
-                queryBuilder.appendWhere(Event.EVENT_ID + " = " + rowId);
+                queryBuilder.appendWhere(DataContract.Day.DAY_ID + " = " + rowId);
             default:
                 break;
         }
 
-        queryBuilder.setTables(Event.TABLE_NAME);
+        queryBuilder.setTables(DataContract.Day.TABLE_NAME);
 
-        final Cursor cursor = queryBuilder.query(eventDatabase, projection, selection, selectionArgs, groupBy, having, sortOrder);
+        final Cursor cursor = queryBuilder.query(dayDatabase, projection, selection, selectionArgs, groupBy, having, sortOrder);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
-
         return cursor;
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 
-        final SQLiteDatabase eventDatabase = eventDatabaseHelper.getWritableDatabase();
+        final SQLiteDatabase dayDatabase = dayDatabaseHelper.getWritableDatabase();
         int updateCount = 0;
 
         switch (URI_MATCHER.match(uri)) {
             case SINGLEROW:
                 final String rowId = uri.getPathSegments().get(1);
-                selection = Event.EVENT_ID + " = " + rowId + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ")" : "");
-                updateCount = eventDatabase.update(Event.TABLE_NAME, values, selection, selectionArgs);
+                selection = DataContract.Day.DAY_ID + " = " + rowId + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ")" : "");
+                updateCount = dayDatabase.update(DataContract.Day.TABLE_NAME, values, selection, selectionArgs);
             default:
                 break;
         }
@@ -96,15 +98,14 @@ public class EventProvider extends ContentProvider {
         return updateCount;
     }
 
-
     @Override
     public String getType(Uri uri) {
 
         switch (URI_MATCHER.match(uri)) {
             case ALLROWS:
-                return "vnd.android.cursor.dir/vnd.myleakyconlondon.events";
+                return "vnd.android.cursor.dir/vnd.myleakyconlondon.days";
             case SINGLEROW:
-                return "vnd.android.cursor.item/vnd.myleakyconlondon.event";
+                return "vnd.android.cursor.item/vnd.myleakyconlondon.day";
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -113,12 +114,12 @@ public class EventProvider extends ContentProvider {
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
 
-        final SQLiteDatabase eventDatabase = eventDatabaseHelper.getWritableDatabase();
+        final SQLiteDatabase dayDatabase = dayDatabaseHelper.getWritableDatabase();
 
         switch (URI_MATCHER.match(uri)) {
             case SINGLEROW:
                 final String rowId = uri.getPathSegments().get(1);
-                selection = Event.EVENT_ID + " = " + rowId + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ")" : "");
+                selection = DataContract.Day.DAY_ID + " = " + rowId + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ")" : "");
             default:
                 break;
         }
@@ -127,7 +128,7 @@ public class EventProvider extends ContentProvider {
             selection = "1";
         }
 
-        int deleteCount = eventDatabase.delete(Event.TABLE_NAME, selection, selectionArgs);
+        int deleteCount = dayDatabase.delete(DataContract.Day.TABLE_NAME, selection, selectionArgs);
 
         getContext().getContentResolver().notifyChange(uri, null);
 
@@ -140,7 +141,7 @@ public class EventProvider extends ContentProvider {
 
     static {
         URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
-        URI_MATCHER.addURI(AUTHORITY, Event.TABLE_NAME, ALLROWS);
-        URI_MATCHER.addURI(AUTHORITY, Event.TABLE_NAME + "/#", SINGLEROW);
+        URI_MATCHER.addURI(AUTHORITY, DataContract.Day.TABLE_NAME, ALLROWS);
+        URI_MATCHER.addURI(AUTHORITY, DataContract.Day.TABLE_NAME + "/#", SINGLEROW);
     }
 }

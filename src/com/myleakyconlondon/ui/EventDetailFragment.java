@@ -10,13 +10,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import com.myleakyconlondon.DateHelper;
+import com.myleakyconlondon.adapter.DateAdapter;
+import com.myleakyconlondon.model.Day;
+import com.myleakyconlondon.model.DayHelper;
+import com.myleakyconlondon.util.DateHelper;
 import com.myleakyconlondon.dao.DataContract;
 import com.myleakyconlondon.dao.EventProvider;
 import com.myleakyconlondon.model.Event;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * User: Elizabeth
@@ -27,8 +31,8 @@ public class EventDetailFragment extends Fragment {
 
     private long eventId;
     private TextView title, location, description;
-    private Spinner type;
-    private Button startDate, endDate, startTime, endTime;
+    private Spinner type, startDate, endDate;
+    private Button startTime, endTime;
     private View view;
 
     public static EventDetailFragment getInstance(Event event) {
@@ -64,12 +68,13 @@ public class EventDetailFragment extends Fragment {
         location = (TextView) rootView.findViewById(R.id.detail_location);
         description = (TextView) rootView.findViewById(R.id.detail_description);
         type = (Spinner) rootView.findViewById(R.id.detail_types);
-        startDate = (Button) rootView.findViewById(R.id.set_StartDate);
-        endDate = (Button) rootView.findViewById(R.id.set_EndDate);
+        startDate = (Spinner) rootView.findViewById(R.id.set_StartDate);
+        endDate = (Spinner) rootView.findViewById(R.id.set_EndDate);
         startTime = (Button) rootView.findViewById(R.id.set_StartTime);
         endTime = (Button) rootView.findViewById(R.id.set_EndTime);
 
         setTypes();
+        loadDates();
 
         if (savedInstanceState != null) {
             // Restore last state
@@ -78,19 +83,20 @@ public class EventDetailFragment extends Fragment {
             eventId = 0;
         }
 
-        if (getArguments() != null) {
+        if (getActivity().getIntent().getExtras() != null) {
 
-            eventId = getArguments().getLong(DataContract.Event.EVENT_ID);
-            title.setText(getArguments().getString(DataContract.Event.TITLE));
-            description.setText(getArguments().getString(DataContract.Event.DESCRIPTION));
-            location.setText(getArguments().getString(DataContract.Event.LOCATION));
+            Event event = getActivity().getIntent().getExtras().getParcelable("selectedEvent");
+            eventId = event.getEventId();
+            title.setText(event.getTitle());
+            description.setText(event.getDescription());
+            location.setText(event.getLocation());
             ArrayAdapter typeAdapter = (ArrayAdapter) type.getAdapter();
-            int spinnerPosition = typeAdapter.getPosition(getArguments().getString(DataContract.Event.TYPE));
+            int spinnerPosition = typeAdapter.getPosition(event.getType());
             type.setSelection(spinnerPosition);
-            startDate.setText(DateHelper.getFormattedDateFromDateTime(getArguments().getString(DataContract.Event.START_DATE)));
-            endDate.setText(DateHelper.getFormattedDateFromDateTime(getArguments().getString(DataContract.Event.END_DATE)));
-            startTime.setText(DateHelper.getFormattedTimeFromDateTime(getArguments().getString(DataContract.Event.START_DATE)));
-            endTime.setText(DateHelper.getFormattedTimeFromDateTime(getArguments().getString(DataContract.Event.END_DATE)));
+            setSelectionById(startDate, event.getDayId());
+            setSelectionById(endDate, event.getDayEndId());
+            startTime.setText(DateHelper.formatTime(event.getStartTime()));
+            endTime.setText(DateHelper.formatTime(event.getEndTime()));
         }  else {
             //hide delete button
             ToggleButton deleteToggle = (ToggleButton) view.findViewById(R.id.delete_event);
@@ -102,6 +108,31 @@ public class EventDetailFragment extends Fragment {
         return rootView;
     }
 
+    private List<Day> loadDates() {
+
+        List<Day> days = DayHelper.getDays(getActivity());
+
+        DateAdapter dateAdapter = new DateAdapter(getActivity(), android.R.layout.simple_spinner_item, days);
+        dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        startDate.setAdapter(dateAdapter);
+        endDate.setAdapter(dateAdapter);
+        dateAdapter.notifyDataSetChanged();
+
+        return days;
+    }
+
+    private void setSelectionById(Spinner spinner,long dayId) {
+
+        for (int i = 0; i < spinner.getCount(); i++) {
+            long itemIdAtPosition2 = spinner.getItemIdAtPosition(i);
+            if (itemIdAtPosition2 == dayId) {
+                spinner.setSelection(i);
+                break;
+            }
+        }
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -111,28 +142,12 @@ public class EventDetailFragment extends Fragment {
     private void setTypes() {
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity().getApplicationContext(), R.array.types_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner s = (Spinner)view.findViewById(R.id.detail_types);
         s.setAdapter(adapter);
     }
 
     private void setUpButtons() {
-
-        Button startDate = (Button) view.findViewById(R.id.set_StartDate);
-        startDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                setUpDatePicker(R.id.set_StartDate, DataContract.Event.START_DATE);
-            }
-        });
-
-        Button endDate = (Button) view.findViewById(R.id.set_EndDate);
-        endDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                setUpDatePicker(R.id.set_EndDate, DataContract.Event.END_DATE);
-            }
-        });
 
         Button endTime = (Button) view.findViewById(R.id.set_EndTime);
         endTime.setOnClickListener(new View.OnClickListener() {
@@ -190,6 +205,8 @@ public class EventDetailFragment extends Fragment {
         values.put(DataContract.Event.IS_BACKUP_EVENT, false);
         values.put(DataContract.Event.START_DATE, formatDateTime(R.id.set_StartDate, R.id.set_StartTime));
         values.put(DataContract.Event.END_DATE, formatDateTime(R.id.set_EndDate, R.id.set_EndTime));
+        values.put(DataContract.Event.DAY_ID, ((Day)startDate.getSelectedItem()).getDayNumber());
+        values.put(DataContract.Event.DAY_END_ID, ((Day)endDate.getSelectedItem()).getDayNumber());
         return values;
     }
 
@@ -219,10 +236,12 @@ public class EventDetailFragment extends Fragment {
     private Long formatDateTime(int dateId, int timeId) {
 
         //todo validate a fix
-        Button date = (Button) view.findViewById(dateId);
+        Spinner date = (Spinner) view.findViewById(dateId);
         Button time = (Button) view.findViewById(timeId);
 
-        Date formattedDate = DateHelper.getFormattedDate(date.getText().toString() + " " + time.getText().toString());
+        String selectedDate = ((Day)date.getSelectedItem()).getDate();
+        Date formattedDate = DateHelper.getFormattedDate(selectedDate + " " + time.getText() != null ? time.getText().toString() : "00:00:00", "dd/MM/yyyy HH:mm");
+
         Calendar c = Calendar.getInstance();
         c.setTime(formattedDate);
 
@@ -246,7 +265,7 @@ public class EventDetailFragment extends Fragment {
         Date date = null;
 
         if(getArguments() != null)  {
-            date = DateHelper.getFormattedDate(getArguments().getString(dateName));
+            date = DateHelper.getFormattedDate(getArguments().getString(dateName), "dd/MM/yyyy HH:mm");
         }
         DialogFragment newFragment = new DatePickerFragment(pickerId, date);
         newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");

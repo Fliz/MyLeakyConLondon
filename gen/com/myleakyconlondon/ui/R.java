@@ -15,45 +15,69 @@ public final class R {
     }
     public static final class drawable {
         public static final int icon=0x7f020000;
+        public static final int menu_add=0x7f020001;
     }
     public static final class id {
-        public static final int addEvent=0x7f060011;
-        public static final int delete_event=0x7f060009;
-        public static final int detail_backup=0x7f060008;
-        public static final int detail_description=0x7f060001;
-        public static final int detail_location=0x7f060006;
-        public static final int detail_name=0x7f060000;
-        public static final int detail_types=0x7f060007;
-        public static final int details_save=0x7f06000a;
-        public static final int eventDescription=0x7f06000d;
-        public static final int eventDuration=0x7f06000f;
-        public static final int eventStartDate=0x7f06000e;
-        public static final int eventTitle=0x7f06000c;
-        public static final int event_detail_fragment=0x7f06000b;
-        public static final int events=0x7f060010;
-        public static final int events_fragment=0x7f060012;
-        public static final int set_EndDate=0x7f060004;
-        public static final int set_EndTime=0x7f060005;
-        public static final int set_StartDate=0x7f060002;
-        public static final int set_StartTime=0x7f060003;
+        public static final int action_settings=0x7f07001c;
+        public static final int addDay=0x7f070003;
+        public static final int add_event=0x7f07001b;
+        public static final int chkDay=0x7f070006;
+        public static final int config_fragment=0x7f070000;
+        public static final int dayNumber=0x7f070002;
+        public static final int day_text=0x7f070007;
+        public static final int delete_event=0x7f070011;
+        public static final int detail_backup=0x7f070010;
+        public static final int detail_description=0x7f070009;
+        public static final int detail_location=0x7f07000e;
+        public static final int detail_name=0x7f070008;
+        public static final int detail_types=0x7f07000f;
+        public static final int details_save=0x7f070012;
+        public static final int drop_down_date=0x7f070005;
+        public static final int eventDays=0x7f070001;
+        public static final int eventDescription=0x7f070015;
+        public static final int eventDuration=0x7f070017;
+        public static final int eventStartDate=0x7f070016;
+        public static final int eventTitle=0x7f070014;
+        public static final int event_detail_fragment=0x7f070013;
+        public static final int events=0x7f070018;
+        public static final int events_fragment=0x7f070019;
+        public static final int saveConfig=0x7f070004;
+        public static final int set_EndDate=0x7f07000c;
+        public static final int set_EndTime=0x7f07000d;
+        public static final int set_StartDate=0x7f07000a;
+        public static final int set_StartTime=0x7f07000b;
+        public static final int viewpager=0x7f07001a;
     }
     public static final class layout {
-        public static final int event_detail=0x7f030000;
-        public static final int event_details=0x7f030001;
-        public static final int event_list_item=0x7f030002;
-        public static final int events=0x7f030003;
-        public static final int main=0x7f030004;
+        public static final int config=0x7f030000;
+        public static final int config_fragment=0x7f030001;
+        public static final int date_drop_down=0x7f030002;
+        public static final int day_list_item=0x7f030003;
+        public static final int event_detail=0x7f030004;
+        public static final int event_details=0x7f030005;
+        public static final int event_list_item=0x7f030006;
+        public static final int events=0x7f030007;
+        public static final int main=0x7f030008;
+        public static final int tabs_viewpager_layout=0x7f030009;
+    }
+    public static final class menu {
+        public static final int menu=0x7f060000;
     }
     public static final class string {
+        public static final int add_day=0x7f040011;
         public static final int add_event=0x7f040010;
         public static final int app_name=0x7f040000;
+        public static final int config_event=0x7f040016;
+        public static final int delete_day=0x7f040014;
         public static final int delete_event=0x7f040004;
         public static final int detail_backup=0x7f04000e;
         public static final int detail_cancel=0x7f04000c;
         public static final int detail_save=0x7f04000f;
         public static final int detail_types=0x7f04000d;
+        public static final int dont_delete_day=0x7f040013;
         public static final int dont_delete_event=0x7f04000b;
         public static final int event_date=0x7f040006;
+        public static final int event_day=0x7f040015;
         public static final int event_description=0x7f040002;
         public static final int event_duration=0x7f040007;
         public static final int event_end_date=0x7f040009;
@@ -62,5 +86,6 @@ public final class R {
         public static final int event_name=0x7f040001;
         public static final int event_startdate=0x7f040005;
         public static final int event_time=0x7f040008;
+        public static final int save_config=0x7f040012;
     }
 }

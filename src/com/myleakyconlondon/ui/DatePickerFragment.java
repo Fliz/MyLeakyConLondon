@@ -37,7 +37,6 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
             dListener = (OnDateSelectedListener) activity;
 
         } catch (ClassCastException e) {
-            Log.i("test", "exception " + e);
             throw new ClassCastException(activity.toString() + " must implement OnDateSelectedListener");
         }
     }

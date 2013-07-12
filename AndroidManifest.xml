@@ -12,8 +12,23 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".EventDetailActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".ConfigActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
         <provider
                 android:name="com.myleakyconlondon.dao.EventProvider" android:authorities="com.myleakyconlondon.dao.EventProvider"
+                android:exported="false" />
+        <provider
+                android:name="com.myleakyconlondon.dao.DaysProvider" android:authorities="com.myleakyconlondon.dao.DaysProvider"
                 android:exported="false" />
     </application>
 </manifest>

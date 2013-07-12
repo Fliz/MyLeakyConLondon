@@ -3,10 +3,8 @@ package com.myleakyconlondon.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-import com.myleakyconlondon.DateHelper;
+import com.myleakyconlondon.util.DateHelper;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -16,7 +14,10 @@ import java.util.Date;
  */
 public class Event implements Parcelable {
 
-    private long eventId, backUpEventId;
+    private long eventId;
+    private long backUpEventId;
+    private long dayId;
+    private long dayEndId;
     private String title, description, location, type;
     private Date startTime, endTime;
     private boolean isBackUpEvent;
@@ -41,6 +42,22 @@ public class Event implements Parcelable {
             return new Event[size];
         }
     };
+
+    public long getDayEndId() {
+        return dayEndId;
+    }
+
+    public void setDayEndId(long dayEndId) {
+        this.dayEndId = dayEndId;
+    }
+
+    public long getDayId() {
+        return dayId;
+    }
+
+    public void setDayId(long dayId) {
+        this.dayId = dayId;
+    }
 
     public long getEventId() {
         return eventId;
@@ -131,6 +148,8 @@ public class Event implements Parcelable {
         eventParcel.writeString(Boolean.toString(isBackUpEvent));
         eventParcel.writeString(startTime.toString());
         eventParcel.writeString(endTime.toString());
+        eventParcel.writeLong(dayId);
+        eventParcel.writeLong(dayEndId);
     }
 
     private void readFromParcel (Parcel eventParcel) {
@@ -140,8 +159,11 @@ public class Event implements Parcelable {
         title = eventParcel.readString();
         description = eventParcel.readString();
         location = eventParcel.readString();
+        type = eventParcel.readString();
         isBackUpEvent = Boolean.getBoolean(eventParcel.readString());
-        startTime = DateHelper.getFormattedDate(eventParcel.readString());
-        endTime = DateHelper.getFormattedDate(eventParcel.readString());
+        startTime = DateHelper.getFormattedDate(eventParcel.readString(), "EEE MMM dd HH:mm:ss z yyyy");
+        endTime = DateHelper.getFormattedDate(eventParcel.readString(), "EEE MMM dd HH:mm:ss z yyyy");
+        dayId = eventParcel.readLong();
+        dayEndId = eventParcel.readLong();
     }
 }

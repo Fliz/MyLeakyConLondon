@@ -23,7 +23,9 @@ public class EventSQLiteHelper extends SQLiteOpenHelper {
                     DataContract.Event.LOCATION + TEXT_TYPE +
                     DataContract.Event.TYPE + TEXT_TYPE +
                     DataContract.Event.IS_BACKUP_EVENT + TEXT_TYPE +
-                    DataContract.Event.BACKUP_EVENT_ID + " TEXT" +
+                    DataContract.Event.BACKUP_EVENT_ID + " INTEGER," +
+                    DataContract.Event.DAY_ID + " INTEGER," +
+                    DataContract.Event.DAY_END_ID + " INTEGER" +
             ");";
 
     public static final int DATABASE_VERSION = 1;

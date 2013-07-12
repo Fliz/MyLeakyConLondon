@@ -5,11 +5,10 @@
               android:layout_height="fill_parent">
 
     <FrameLayout
-            android:id="@+id/events_fragment"
-            android:name="com.myleakyconlondon.ui.EventsFragment"
+            android:id="@+id/config_fragment"
+            android:name="com.myleakyconlondon.ui.ConfigFragment"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1" />
-
 
 </LinearLayout>
