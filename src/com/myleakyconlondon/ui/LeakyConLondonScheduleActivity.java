@@ -106,7 +106,6 @@ public class LeakyConLondonScheduleActivity extends FragmentActivity implements 
             Fragment fragment = Fragment.instantiate(this, EventsFragment.class.getName());
             fragment.setArguments(args);
             fragments.add(fragment);
-            Log.i("fix", fragments.size() + " number");
         }
 
         this.mPagerAdapter = new PagerAdapter(super.getSupportFragmentManager(), fragments);
@@ -124,7 +123,6 @@ public class LeakyConLondonScheduleActivity extends FragmentActivity implements 
         TabInfo tabInfo = null;
 
         for(int day : days) {
-            Log.i("fix", " init tab host " + days);
             LeakyConLondonScheduleActivity.AddTab(this, this.mTabHost, this.mTabHost.newTabSpec("tab" + day).setIndicator("Day " + day), (tabInfo = new TabInfo("tab" + day, EventsFragment.class, args)));
 
             this.mapTabInfo.put(tabInfo.tag, tabInfo);
@@ -143,13 +141,9 @@ public class LeakyConLondonScheduleActivity extends FragmentActivity implements 
     }
 
     public void onTabChanged(String tag) {
-        //TabInfo newTab = this.mapTabInfo.get(tag);
-        //todo null pointer here
-        Log.i("fix", "tab changed " + tag);
+
         int pos = this.mTabHost.getCurrentTab();
-        Log.i("fix", "tab changed pos" + pos);
         this.mViewPager.setCurrentItem(pos);
-        Log.i("fix", "current item");
     }
 
     @Override
@@ -165,7 +159,6 @@ public class LeakyConLondonScheduleActivity extends FragmentActivity implements 
     @Override
     public void onPageScrollStateChanged(int state) {
              //nothing here
-        Log.i("fix", "state changed");
     }
 
     @Override

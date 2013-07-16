@@ -10,7 +10,7 @@ public abstract class DataContract implements BaseColumns {
     private DataContract() {}
 
     public static abstract class Event implements BaseColumns {
-        public static final String TABLE_NAME = "event";
+        public static final String TABLE_NAME = "events";
         public static final String EVENT_ID = "_id";
         public static final String TITLE = "title";
         public static final String DESCRIPTION = "description";

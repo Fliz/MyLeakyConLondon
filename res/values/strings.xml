@@ -19,10 +19,13 @@
     <string name="add_event">Add Event</string>
     <string name="add_day">Add New Day</string>
     <string name="save_config">Save Config</string>
-    <string name="dont_delete_day">Don\'t Delete Selected Day</string>
+    <string name="delete_days">Delete days</string>
     <string name="delete_day">Delete Day</string>
     <string name="event_day">Event Day</string>
     <string name="config_event">Config</string>
+    <string name="dialog_delete">Are you sure you wish to delete?</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
 
     <string-array name="types_array">
         <item>Panel</item>

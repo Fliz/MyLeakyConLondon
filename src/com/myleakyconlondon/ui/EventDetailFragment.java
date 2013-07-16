@@ -17,6 +17,7 @@ import com.myleakyconlondon.util.DateHelper;
 import com.myleakyconlondon.dao.DataContract;
 import com.myleakyconlondon.dao.EventProvider;
 import com.myleakyconlondon.model.Event;
+import com.myleakyconlondon.util.ValidationHelper;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -34,28 +35,6 @@ public class EventDetailFragment extends Fragment {
     private Spinner type, startDate, endDate;
     private Button startTime, endTime;
     private View view;
-
-    public static EventDetailFragment getInstance(Event event) {
-
-        final EventDetailFragment eventDetailFragment = new EventDetailFragment();
-        final Bundle args = new Bundle();
-
-        if (event != null) {
-
-            args.putLong(DataContract.Event.EVENT_ID, event.getEventId());
-            args.putLong(DataContract.Event.BACKUP_EVENT_ID, event.getBackUpEventId());
-            args.putString(DataContract.Event.TITLE, event.getTitle());
-            args.putString(DataContract.Event.DESCRIPTION, event.getDescription());
-            args.putString(DataContract.Event.LOCATION, event.getLocation());
-            args.putString(DataContract.Event.TYPE, event.getType());
-            args.putString(DataContract.Event.START_DATE, DateHelper.formatDateTime(event.getStartTime()));
-            args.putString(DataContract.Event.END_DATE, DateHelper.formatDateTime(event.getEndTime()));
-            args.putBoolean(DataContract.Event.IS_BACKUP_EVENT, event.isBackUpEvent());
-            eventDetailFragment.setArguments(args);
-        }
-
-        return eventDetailFragment;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -125,8 +104,9 @@ public class EventDetailFragment extends Fragment {
     private void setSelectionById(Spinner spinner,long dayId) {
 
         for (int i = 0; i < spinner.getCount(); i++) {
-            long itemIdAtPosition2 = spinner.getItemIdAtPosition(i);
-            if (itemIdAtPosition2 == dayId) {
+            Day day = (Day)spinner.getItemAtPosition(i);
+
+            if (day.getDayNumber() == dayId) {
                 spinner.setSelection(i);
                 break;
             }
@@ -181,12 +161,25 @@ public class EventDetailFragment extends Fragment {
         if(eventId != 0) {
             updateOrDelete(values);
         } else {
-            //Insert
-            getActivity().getContentResolver().insert(EventProvider.CONTENT_URI,values);
+            insertEvent(values);
         }
-
+           //todo move validate out of here so intent does not occur
         Intent intent = new Intent(getActivity(), LeakyConLondonScheduleActivity.class);
         startActivity(intent);
+    }
+
+    private void insertEvent(ContentValues values) {
+
+        ValidationHelper validate = new ValidationHelper();
+        String title = values.get(DataContract.Event.TITLE).toString();
+        String startDate =  values.get(DataContract.Event.START_DATE).toString();
+        String endDate = values.get(DataContract.Event.END_DATE).toString();
+
+        if(validate.validateEvent(title, startDate, endDate)) {
+            getActivity().getContentResolver().insert(EventProvider.CONTENT_URI,values);
+        }  else {
+            makeValidationToast(validate);
+        }
     }
 
     private ContentValues getEventValues() {
@@ -215,9 +208,34 @@ public class EventDetailFragment extends Fragment {
         if(isDeleteAction())  {
             deleteEvent();
         }   else {
-            //Update
+            update(values);
+        }
+    }
+
+    private void update(ContentValues values) {
+
+        ValidationHelper validate = new ValidationHelper();
+        String title = values.get(DataContract.Event.TITLE).toString();
+        String startDate =  values.get(DataContract.Event.START_DATE).toString();
+        String endDate = values.get(DataContract.Event.END_DATE).toString();
+
+        if(validate.validateEvent(title, startDate, endDate)) {
+
             getActivity().getContentResolver().update(EventProvider.CONTENT_URI, values, DataContract.Event.EVENT_ID + " = " + eventId, null);
-            Log.i("Info", "Updating event " + eventId);
+            Log.i("LCLInfo", "Updating event " + eventId);
+
+        }  else {
+
+               makeValidationToast(validate);
+        }
+    }
+
+    private void makeValidationToast(ValidationHelper validate) {
+
+        List<String> messages = validate.getMessages();
+
+        for(String message : messages)  {
+            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -230,12 +248,11 @@ public class EventDetailFragment extends Fragment {
     private void deleteEvent() {
 
         getActivity().getContentResolver().delete(EventProvider.CONTENT_URI, DataContract.Event.EVENT_ID + " = " + eventId, null);
-        Log.i("Info", "Deleting event " + eventId);
+        Log.i("LCLInfo", "Deleting event " + eventId);
     }
 
     private Long formatDateTime(int dateId, int timeId) {
 
-        //todo validate a fix
         Spinner date = (Spinner) view.findViewById(dateId);
         Button time = (Button) view.findViewById(timeId);
 

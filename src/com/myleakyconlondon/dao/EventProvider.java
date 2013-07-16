@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import android.util.Log;
 import com.myleakyconlondon.dao.DataContract.Event;
 
 /**
@@ -19,7 +20,6 @@ public class EventProvider extends ContentProvider {
     private static final String AUTHORITY = "com.myleakyconlondon.dao.EventProvider";
     private static final String BASE_PATH = "events";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH);
-
     private EventSQLiteHelper eventDatabaseHelper;
 
     @Override
@@ -84,13 +84,14 @@ public class EventProvider extends ContentProvider {
 
         switch (URI_MATCHER.match(uri)) {
             case SINGLEROW:
+
                 final String rowId = uri.getPathSegments().get(1);
                 selection = Event.EVENT_ID + " = " + rowId + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ")" : "");
-                updateCount = eventDatabase.update(Event.TABLE_NAME, values, selection, selectionArgs);
             default:
                 break;
         }
 
+        updateCount = eventDatabase.update(Event.TABLE_NAME, values, selection, selectionArgs);
         getContext().getContentResolver().notifyChange(uri,null);
 
         return updateCount;
@@ -99,7 +100,7 @@ public class EventProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-
+            Log.i("fix", "get type");
         switch (URI_MATCHER.match(uri)) {
             case ALLROWS:
                 return "vnd.android.cursor.dir/vnd.myleakyconlondon.events";

@@ -43,7 +43,6 @@ public class EventsFragment extends Fragment implements AdapterView.OnItemSelect
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        Log.i("fix", "setting up event list ");
         final View view = inflater.inflate(R.layout.events, container, false);
         setUpEventsList((ListView) view.findViewById(R.id.events));
 
@@ -75,9 +74,7 @@ public class EventsFragment extends Fragment implements AdapterView.OnItemSelect
 
                 int dayId = 0;
 
-                Log.i("fix", "day args is " + dayArgs);                   //todo sort of empty wrong day id set....
                 if(dayArgs !=  null) {
-                    Log.i("fix", " hi " +  dayArgs.getInt("dayId"));
                     dayId = dayArgs.getInt("dayId") ;
                 }
 
@@ -90,7 +87,7 @@ public class EventsFragment extends Fragment implements AdapterView.OnItemSelect
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        //todo suspect cursor null
+
         switch (cursorLoader.getId()) {
             case EVENT_LOADER:
                 eventCursorAdapter.changeCursor(cursor);

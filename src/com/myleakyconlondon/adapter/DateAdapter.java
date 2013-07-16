@@ -33,7 +33,7 @@ public class DateAdapter extends ArrayAdapter<Day> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
-    {   // Ordinary view in Spinner, we use android.R.layout.simple_spinner_item
+    {
         View row = convertView;
         if(row == null)
         {

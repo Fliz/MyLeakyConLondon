@@ -41,6 +41,7 @@ public class ConfigActivity extends FragmentActivity implements ConfigFragment.O
     public void onDaySelected(Day selectedDay) {
 
         //todo on day selected
+        Log.i("fix", "HOLY GRAIL");
     }
 
     @Override
