@@ -29,8 +29,7 @@ import java.util.Vector;
  * User: Elizabeth Hamlet
  */
 public class LeakyConLondonScheduleActivity extends FragmentActivity implements TabHost.OnTabChangeListener, ViewPager.OnPageChangeListener, EventsFragment.OnEventSelectedListener {
-
-    public boolean isDualPane = false;
+            //TODO FIX TAB
     private TabHost mTabHost;
     private ViewPager mViewPager;
     private HashMap<String, TabInfo> mapTabInfo;
@@ -111,7 +110,7 @@ public class LeakyConLondonScheduleActivity extends FragmentActivity implements 
         this.mPagerAdapter = new PagerAdapter(super.getSupportFragmentManager(), fragments);
 
         this.mViewPager = (ViewPager)super.findViewById(R.id.viewpager);
-        this.mViewPager.setOffscreenPageLimit(2);
+        this.mViewPager.setOffscreenPageLimit(4);
         this.mViewPager.setAdapter(this.mPagerAdapter);
         this.mViewPager.setOnPageChangeListener(this);
     }

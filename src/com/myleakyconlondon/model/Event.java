@@ -160,7 +160,7 @@ public class Event implements Parcelable {
         description = eventParcel.readString();
         location = eventParcel.readString();
         type = eventParcel.readString();
-        isBackUpEvent = Boolean.getBoolean(eventParcel.readString());
+        isBackUpEvent = eventParcel.readString().equals("true");
         startTime = DateHelper.getFormattedDate(eventParcel.readString(), "EEE MMM dd HH:mm:ss z yyyy");
         endTime = DateHelper.getFormattedDate(eventParcel.readString(), "EEE MMM dd HH:mm:ss z yyyy");
         dayId = eventParcel.readLong();

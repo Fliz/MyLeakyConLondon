@@ -118,6 +118,13 @@
             android:text="@string/detail_backup"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <CheckBox
+            android:id="@+id/chkBackUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/isBackUp"
+            android:checked="false"/>
+
     <Spinner
             android:id="@+id/detail_backup"
             android:layout_width="fill_parent"

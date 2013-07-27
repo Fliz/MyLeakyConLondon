@@ -6,13 +6,15 @@
               android:layout_gravity="right"
               android:orientation="vertical"
               android:paddingLeft="10dp"
-              android:paddingRight="10dp" >
+              android:paddingRight="10dp"
+              android:textColor="@color/Black">
     <TextView
             android:id="@+id/eventTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/event_name"
-            android:textSize="17sp" />
+            android:textSize="20sp"
+            android:textColor="@color/Black"/>
 
     <TextView
             android:id="@+id/eventDescription"
@@ -20,20 +22,55 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="@string/event_description"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-    <TextView
-            android:id="@+id/eventStartDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="@string/event_startdate"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-    <TextView
-            android:id="@+id/eventDuration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="@string/event_duration"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/Black"/>
+
+    <LinearLayout android:orientation="horizontal"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content">
+
+        <TextView
+                android:id="@+id/type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/Black"/>
+
+        <TextView
+                android:id="@+id/startText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/starts"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/Black"/>
+
+        <TextView
+                android:id="@+id/eventStartDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/event_startdate"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/Black"/>
+
+        <TextView
+                android:id="@+id/durationText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/duration"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/Black"/>
+
+        <TextView
+                android:id="@+id/eventDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/event_duration"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/Black"/>
+       </LinearLayout>
 
 </LinearLayout>

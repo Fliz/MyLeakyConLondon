@@ -1,14 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
-              android:orientation="vertical" >
+              android:orientation="vertical">
+
+    <LinearLayout android:orientation="horizontal"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:padding="10dp">
+        <CheckBox
+                android:id="@+id/chkBackFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/back_filter"
+                android:checked="false"/>
+        <CheckBox
+                android:id="@+id/chkPastFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/past_filter"
+                android:checked="false"/>
+    </LinearLayout>
 
     <ListView
             android:id="@+id/events"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
     </ListView>
-
 </LinearLayout>
+
 

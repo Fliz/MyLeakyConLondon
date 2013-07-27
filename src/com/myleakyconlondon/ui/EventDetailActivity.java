@@ -17,10 +17,6 @@ public class EventDetailActivity extends FragmentActivity implements TimePickerF
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.event_details);
-
-        if (savedInstanceState != null) {
-            //todo get saved values
-        }
     }
 
     @Override

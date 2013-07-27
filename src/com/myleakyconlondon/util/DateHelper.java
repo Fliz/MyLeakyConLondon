@@ -48,12 +48,11 @@ public class DateHelper {
     public static Date getFormattedDate(String date, String format) {
 
         Date dateTime = null;
-        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.ENGLISH);
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
         try {
             dateTime = sdf.parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
-            Log.i("fix", "error " + e.getMessage());
         }
 
         return dateTime;

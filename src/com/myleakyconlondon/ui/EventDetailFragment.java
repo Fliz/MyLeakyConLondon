@@ -5,14 +5,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.text.LoginFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.myleakyconlondon.adapter.DateAdapter;
+import com.myleakyconlondon.adapter.EventBackUpAdapter;
 import com.myleakyconlondon.model.Day;
 import com.myleakyconlondon.model.DayHelper;
+import com.myleakyconlondon.model.EventDao;
 import com.myleakyconlondon.util.DateHelper;
 import com.myleakyconlondon.dao.DataContract;
 import com.myleakyconlondon.dao.EventProvider;
@@ -30,11 +33,13 @@ import java.util.List;
  */
 public class EventDetailFragment extends Fragment {
 
-    private long eventId;
+    private long eventId = 0;
+    private long backUpEventId = 0;
     private TextView title, location, description;
-    private Spinner type, startDate, endDate;
+    private Spinner type, startDate, endDate, backUpEvent;
     private Button startTime, endTime;
     private View view;
+    private long dayId = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,43 +56,62 @@ public class EventDetailFragment extends Fragment {
         endDate = (Spinner) rootView.findViewById(R.id.set_EndDate);
         startTime = (Button) rootView.findViewById(R.id.set_StartTime);
         endTime = (Button) rootView.findViewById(R.id.set_EndTime);
+        backUpEvent = (Spinner) rootView.findViewById(R.id.detail_backup);
 
         setTypes();
         loadDates();
-
-        if (savedInstanceState != null) {
-            // Restore last state
-            eventId = savedInstanceState.getLong(DataContract.Event.EVENT_ID);
-        } else {
-            eventId = 0;
-        }
 
         if (getActivity().getIntent().getExtras() != null) {
 
             Event event = getActivity().getIntent().getExtras().getParcelable("selectedEvent");
             eventId = event.getEventId();
+            dayId = event.getDayId();
+            backUpEventId = event.getBackUpEventId();
+
+            loadEvents(dayId);
+
             title.setText(event.getTitle());
             description.setText(event.getDescription());
             location.setText(event.getLocation());
             ArrayAdapter typeAdapter = (ArrayAdapter) type.getAdapter();
             int spinnerPosition = typeAdapter.getPosition(event.getType());
             type.setSelection(spinnerPosition);
-            setSelectionById(startDate, event.getDayId());
-            setSelectionById(endDate, event.getDayEndId());
+            setDaySelectionById(startDate, dayId);
+            setDaySelectionById(endDate, event.getDayEndId());
             startTime.setText(DateHelper.formatTime(event.getStartTime()));
             endTime.setText(DateHelper.formatTime(event.getEndTime()));
+
+            if(event.isBackUpEvent()) {
+                CheckBox isBackUp = (CheckBox) rootView.findViewById(R.id.chkBackUp);
+                isBackUp.setChecked(true);
+                setBackUpSelectionById(backUpEvent);
+            }
+
         }  else {
             //hide delete button
+            loadEvents(dayId);
             ToggleButton deleteToggle = (ToggleButton) view.findViewById(R.id.delete_event);
             deleteToggle.setVisibility(View.GONE);
         }
 
         setUpButtons();
 
+
         return rootView;
     }
 
-    private List<Day> loadDates() {
+    private void loadEvents(long dayId) {
+
+        List<Event> events = EventDao.getEvents(getActivity(),dayId);
+
+        EventBackUpAdapter eventAdapter = new EventBackUpAdapter(getActivity(), android.R.layout.simple_spinner_item, events);
+        eventAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+       backUpEvent.setAdapter(eventAdapter);
+       eventAdapter.notifyDataSetChanged();
+    }
+
+    private void loadDates() {
 
         List<Day> days = DayHelper.getDays(getActivity());
 
@@ -98,10 +122,9 @@ public class EventDetailFragment extends Fragment {
         endDate.setAdapter(dateAdapter);
         dateAdapter.notifyDataSetChanged();
 
-        return days;
     }
 
-    private void setSelectionById(Spinner spinner,long dayId) {
+    private void setDaySelectionById(Spinner spinner, long dayId) {
 
         for (int i = 0; i < spinner.getCount(); i++) {
             Day day = (Day)spinner.getItemAtPosition(i);
@@ -113,10 +136,21 @@ public class EventDetailFragment extends Fragment {
         }
     }
 
+    private void setBackUpSelectionById(Spinner spinner) {
+
+        for (int i = 0; i < spinner.getCount(); i++) {
+            Event event = (Event)spinner.getItemAtPosition(i);
+
+            if (event.getEventId() == backUpEventId) {
+                spinner.setSelection(i);
+                break;
+            }
+        }
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putLong(DataContract.Event.EVENT_ID, eventId);
     }
 
     private void setTypes() {
@@ -156,33 +190,37 @@ public class EventDetailFragment extends Fragment {
 
     public void eventSave() {
 
-        ContentValues values = getEventValues();
-
-        if(eventId != 0) {
-            updateOrDelete(values);
-        } else {
-            insertEvent(values);
-        }
-           //todo move validate out of here so intent does not occur
-        Intent intent = new Intent(getActivity(), LeakyConLondonScheduleActivity.class);
-        startActivity(intent);
-    }
-
-    private void insertEvent(ContentValues values) {
-
         ValidationHelper validate = new ValidationHelper();
+
+        ContentValues values = getEventValues(validate);
         String title = values.get(DataContract.Event.TITLE).toString();
         String startDate =  values.get(DataContract.Event.START_DATE).toString();
         String endDate = values.get(DataContract.Event.END_DATE).toString();
 
         if(validate.validateEvent(title, startDate, endDate)) {
-            getActivity().getContentResolver().insert(EventProvider.CONTENT_URI,values);
+
+           save(values);
+
         }  else {
             makeValidationToast(validate);
         }
     }
 
-    private ContentValues getEventValues() {
+    private void save(ContentValues values) {
+
+        if(eventId != 0) {
+            updateOrDelete(values);
+        } else {
+            //insert
+            getActivity().getContentResolver().insert(EventProvider.CONTENT_URI,values);
+        }
+
+        Intent intent = new Intent(getActivity(), LeakyConLondonScheduleActivity.class);
+        startActivity(intent);
+    }
+
+
+    private ContentValues getEventValues(ValidationHelper validate) {
 
         ContentValues values = new ContentValues();
 
@@ -190,12 +228,19 @@ public class EventDetailFragment extends Fragment {
         EditText description = (EditText) view.findViewById(R.id.detail_description);
         EditText location = (EditText) view.findViewById(R.id.detail_location);
         Spinner type = (Spinner) view.findViewById(R.id.detail_types);
+        CheckBox isBackUp = (CheckBox) view.findViewById(R.id.chkBackUp);
+        Spinner backUpEvent = (Spinner) view.findViewById(R.id.detail_backup);
 
         values.put(DataContract.Event.TITLE, title.getText().toString());
         values.put(DataContract.Event.DESCRIPTION, description.getText().toString());
         values.put(DataContract.Event.LOCATION, location.getText().toString());
         values.put(DataContract.Event.TYPE, type.getSelectedItem().toString());
-        values.put(DataContract.Event.IS_BACKUP_EVENT, false);
+        values.put(DataContract.Event.IS_BACKUP_EVENT, isBackUp.isChecked() ? "1" : "0");
+
+        if(isBackUp.isChecked()) {
+          values.put(DataContract.Event.BACKUP_EVENT_ID, ((Event)backUpEvent.getSelectedItem()).getEventId());
+        }
+
         values.put(DataContract.Event.START_DATE, formatDateTime(R.id.set_StartDate, R.id.set_StartTime));
         values.put(DataContract.Event.END_DATE, formatDateTime(R.id.set_EndDate, R.id.set_EndTime));
         values.put(DataContract.Event.DAY_ID, ((Day)startDate.getSelectedItem()).getDayNumber());
@@ -214,20 +259,8 @@ public class EventDetailFragment extends Fragment {
 
     private void update(ContentValues values) {
 
-        ValidationHelper validate = new ValidationHelper();
-        String title = values.get(DataContract.Event.TITLE).toString();
-        String startDate =  values.get(DataContract.Event.START_DATE).toString();
-        String endDate = values.get(DataContract.Event.END_DATE).toString();
-
-        if(validate.validateEvent(title, startDate, endDate)) {
-
-            getActivity().getContentResolver().update(EventProvider.CONTENT_URI, values, DataContract.Event.EVENT_ID + " = " + eventId, null);
-            Log.i("LCLInfo", "Updating event " + eventId);
-
-        }  else {
-
-               makeValidationToast(validate);
-        }
+        getActivity().getContentResolver().update(EventProvider.CONTENT_URI, values, DataContract.Event.EVENT_ID + " = " + eventId, null);
+        Log.i("LCLInfo", "Updating event " + eventId);
     }
 
     private void makeValidationToast(ValidationHelper validate) {
@@ -257,7 +290,10 @@ public class EventDetailFragment extends Fragment {
         Button time = (Button) view.findViewById(timeId);
 
         String selectedDate = ((Day)date.getSelectedItem()).getDate();
-        Date formattedDate = DateHelper.getFormattedDate(time.getText() != null ? selectedDate + " " + time.getText().toString() : selectedDate + " 00:00:00", "dd/MM/yyyy HH:mm");
+        boolean isTimeProvided = ValidationHelper.isTimeProvided(time.getText().toString());
+
+        String readyToFormatDate = isTimeProvided ? selectedDate + " " + time.getText().toString() : selectedDate + " 00:00";
+        Date formattedDate = DateHelper.getFormattedDate(readyToFormatDate, "dd/MM/yyyy HH:mm");
 
         Calendar c = Calendar.getInstance();
         c.setTime(formattedDate);
@@ -276,20 +312,4 @@ public class EventDetailFragment extends Fragment {
         DialogFragment newFragment = new TimePickerFragment(R.id.set_EndTime);
         newFragment.show(getActivity().getSupportFragmentManager(), "timePicker");
     }
-
-    private void setUpDatePicker(int pickerId, String dateName)  {
-
-        Date date = null;
-
-        if(getArguments() != null)  {
-            date = DateHelper.getFormattedDate(getArguments().getString(dateName), "dd/MM/yyyy HH:mm");
-        }
-        DialogFragment newFragment = new DatePickerFragment(pickerId, date);
-        newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
-    }
-
-
-
-
-
 }

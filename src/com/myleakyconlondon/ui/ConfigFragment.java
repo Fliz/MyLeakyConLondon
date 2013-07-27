@@ -45,10 +45,44 @@ public class ConfigFragment extends Fragment implements AdapterView.OnItemSelect
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Button date = (Button) view.findViewById(R.id.addDay);
+        EditText dayNumber = (EditText) view.findViewById(R.id.dayNumber);
+
+        outState.putString("dayNumber", dayNumber.getText().toString());
+
+        if(!date.getText().toString().trim().equals("Add New Day"))  {
+            outState.putCharSequence("date", date.getText());
+        }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+
+        super.onActivityCreated(savedInstanceState);
+
+        if(savedInstanceState != null) {
+
+            Button date = (Button) view.findViewById(R.id.addDay);
+            EditText dayNumber = (EditText) view.findViewById(R.id.dayNumber);
+
+            if(savedInstanceState.containsKey("date")) {
+                date.setText(savedInstanceState.getCharSequence("date"));
+                Log.i("fix", "date " + date.getText().toString());
+                Log.i("fix", " day "  + dayNumber.getText().toString());
+            }
+            dayNumber.setText(savedInstanceState.getString("dayNumber"));
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.config_fragment, container, false);
         ListView dayList = (ListView)view.findViewById(R.id.eventDays);
+
         setUpDayList(dayList);
 
         save = (Button) view.findViewById(R.id.saveConfig);
@@ -141,8 +175,6 @@ public class ConfigFragment extends Fragment implements AdapterView.OnItemSelect
 
        // DialogFragment dialog = new ConfirmDeleteFragment();
        // dialog.show(getActivity().getSupportFragmentManager(), "NoticeDialogFragment");
-
-
     }
 
     @Override
@@ -189,7 +221,6 @@ public class ConfigFragment extends Fragment implements AdapterView.OnItemSelect
         Log.i("fix", " hmm");
 
         for(int i = 0; i < dayCursorAdapter.getCount(); i++)  {
-            Log.i("fix", " hmmm");
             Day day = DayHelper.cursorToDay((Cursor)dayCursorAdapter.getItem(i));
 
             //todo delete on click

@@ -67,7 +67,6 @@ public class EventProvider extends ContentProvider {
             default:
                 break;
         }
-
         queryBuilder.setTables(Event.TABLE_NAME);
 
         final Cursor cursor = queryBuilder.query(eventDatabase, projection, selection, selectionArgs, groupBy, having, sortOrder);
@@ -100,7 +99,7 @@ public class EventProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-            Log.i("fix", "get type");
+
         switch (URI_MATCHER.match(uri)) {
             case ALLROWS:
                 return "vnd.android.cursor.dir/vnd.myleakyconlondon.events";

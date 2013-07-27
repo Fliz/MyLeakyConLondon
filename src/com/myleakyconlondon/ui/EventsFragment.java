@@ -2,6 +2,7 @@ package com.myleakyconlondon.ui;
 
 import android.app.Activity;
 import android.database.Cursor;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -12,9 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ListView;
+import android.widget.*;
 import com.myleakyconlondon.adapter.EventCursorAdapter;
 import com.myleakyconlondon.dao.DataContract;
 import com.myleakyconlondon.dao.EventProvider;
@@ -22,6 +21,7 @@ import com.myleakyconlondon.model.Event;
 import com.myleakyconlondon.model.EventDao;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * User: Elizabeth Hamlet
@@ -32,6 +32,8 @@ public class EventsFragment extends Fragment implements AdapterView.OnItemSelect
 
     private OnEventSelectedListener eventSelectedListener;
     private EventCursorAdapter eventCursorAdapter;
+    private EventsFragment currentFragment;
+    private ListView list;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,7 +48,50 @@ public class EventsFragment extends Fragment implements AdapterView.OnItemSelect
         final View view = inflater.inflate(R.layout.events, container, false);
         setUpEventsList((ListView) view.findViewById(R.id.events));
 
+        CheckBox backupFilter = (CheckBox)view.findViewById(R.id.chkBackFilter);
+        currentFragment = this;
+
+        backupFilter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                Bundle bundle = new Bundle();
+                setFilterBundle(isChecked, bundle, "isFilter");
+                CheckBox pastFilter = (CheckBox)view.findViewById(R.id.chkPastFilter);
+                setFilterBundle(pastFilter.isChecked(), bundle, "isDayFilter");
+
+                getLoaderManager().restartLoader(EVENT_LOADER, bundle, currentFragment);
+            }
+        });
+
+        CheckBox dateFilter = (CheckBox)view.findViewById(R.id.chkPastFilter);
+
+        dateFilter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                Bundle bundle = new Bundle();
+                setFilterBundle(isChecked, bundle, "isDayFilter");
+                CheckBox backupFilter = (CheckBox)view.findViewById(R.id.chkBackFilter);
+                setFilterBundle(backupFilter.isChecked(), bundle, "isFilter");
+
+                getLoaderManager().restartLoader(EVENT_LOADER, bundle, currentFragment);
+            }
+        });
+
         return view;
+    }
+
+    private Bundle setFilterBundle(boolean isChecked, Bundle bundle, String bundleName) {
+
+        if(isChecked) {
+            bundle.putString(bundleName, "1");
+        }  else {
+            bundle.putString(bundleName, "0");
+        }
+        return bundle;
     }
 
     @Override
@@ -57,6 +102,7 @@ public class EventsFragment extends Fragment implements AdapterView.OnItemSelect
 
     private void setUpEventsList(ListView eventsList) {
 
+        list = eventsList;
         eventCursorAdapter = new EventCursorAdapter(getActivity(), null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         eventsList.setAdapter(eventCursorAdapter);
         eventsList.setOnItemClickListener(this);
@@ -72,17 +118,38 @@ public class EventsFragment extends Fragment implements AdapterView.OnItemSelect
         switch (loaderId) {
             case EVENT_LOADER:
 
-                int dayId = 0;
-
-                if(dayArgs !=  null) {
-                    dayId = dayArgs.getInt("dayId") ;
-                }
-
-                cursorLoader = new CursorLoader(getActivity(), EventProvider.CONTENT_URI, DataContract.Event.COLUMNS, DataContract.Event.DAY_ID  + " = " + dayId, null, DataContract.Event.START_DATE + " ASC");
+               cursorLoader = populateListView(dayArgs, bundle);
                 break;
         }
 
         return cursorLoader;
+    }
+
+    private CursorLoader populateListView(Bundle dayArgs, Bundle filterArgs) {
+
+        int dayId = 0;
+        String dayFilter = "AND " + DataContract.Event.END_DATE + " >= ?";
+        String backUpFilter = "0";
+
+        if(dayArgs !=  null  && dayArgs.containsKey("dayId")) {
+            dayId = dayArgs.getInt("dayId") ;
+        }
+
+        if (filterArgs != null && filterArgs.containsKey("isFilter")) {
+            backUpFilter = filterArgs.getString("isFilter");
+        }
+
+        if(filterArgs != null && filterArgs.containsKey("isDayFilter")) {
+            String filter = filterArgs.getString("isDayFilter");
+            if(filter.equals("1")) {
+                dayFilter = " AND " + DataContract.Event.END_DATE + " < ?" ;
+            }
+        }
+
+        String selection = DataContract.Event.DAY_ID + " = ? AND " + DataContract.Event.IS_BACKUP_EVENT + " = ? " + dayFilter;
+        String selectionArgs[] = new String[] {dayId + "", backUpFilter, new Date().getTime() + ""};
+
+        return new CursorLoader(getActivity(), EventProvider.CONTENT_URI, DataContract.Event.COLUMNS, selection, selectionArgs, DataContract.Event.START_DATE + " ASC");
     }
 
     @Override

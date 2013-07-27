@@ -26,19 +26,24 @@
     <string name="dialog_delete">Are you sure you wish to delete?</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
+    <string name="back_filter">Show back-up events</string>
+    <string name="past_filter">Show past events</string>
+    <string name="starts">starts at</string>
+    <string name="duration">lasting</string>
+    <string name="isBackUp">Is backup event</string>
 
     <string-array name="types_array">
+        <item>Autographs</item>
+        <item>Ball</item>
+        <item>Discussion</item>
+        <item>Food</item>
+        <item>Meet-up</item>
+        <item>Other</item>
         <item>Panel</item>
         <item>Show</item>
-        <item>Ball</item>
-        <item>Feast</item>
-        <item>Concert</item>
         <item>Special Event</item>
-        <item>Signing</item>
-        <item>Meet-up</item>
-        <item>Discussion</item>
         <item>Workshop</item>
-        <item>Podcast</item>
-        <item>Other</item>
+        <item>Wrock</item>
+        <item>Vending</item>
     </string-array>
 </resources>

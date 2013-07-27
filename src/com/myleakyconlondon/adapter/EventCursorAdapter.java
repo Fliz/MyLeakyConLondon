@@ -3,21 +3,26 @@ package com.myleakyconlondon.adapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.*;
 import com.myleakyconlondon.util.DateHelper;
 import com.myleakyconlondon.dao.DataContract;
 import com.myleakyconlondon.ui.R;
+import com.myleakyconlondon.util.LeakyConConstants;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * User: Elizabeth Hamlet
  */
 
-public class EventCursorAdapter extends CursorAdapter {
+public class EventCursorAdapter extends CursorAdapter implements Filterable {
 
     public EventCursorAdapter(Context context, Cursor cursor, int flags) {
 
@@ -35,6 +40,12 @@ public class EventCursorAdapter extends CursorAdapter {
         return row;
     }
 
+    private void setColour(View row, String type) {
+
+        Map<String, Integer> colours = LeakyConConstants.getColours();
+        row.setBackgroundResource(colours.get(type));
+    }
+
     @Override
     public void bindView(View row, Context context, Cursor cursor) {
         populateRow(row, cursor);
@@ -47,13 +58,16 @@ public class EventCursorAdapter extends CursorAdapter {
         eventHolder.description = (TextView) row.findViewById(R.id.eventDescription);
         eventHolder.startDate = (TextView) row.findViewById(R.id.eventStartDate);
         eventHolder.duration = (TextView) row.findViewById(R.id.eventDuration);
-
+        eventHolder.type = (TextView) row.findViewById(R.id.type);
         Date startDate = new Date(cursor.getLong(cursor.getColumnIndex(DataContract.Event.START_DATE)));
         Date endDate = new Date(cursor.getLong(cursor.getColumnIndex(DataContract.Event.END_DATE)));
         eventHolder.title.setText(cursor.getString(cursor.getColumnIndex(DataContract.Event.TITLE)));
         eventHolder.description.setText(cursor.getString(cursor.getColumnIndex(DataContract.Event.DESCRIPTION)));
         eventHolder.startDate.setText(DateHelper.formatDateTime(startDate));
         eventHolder.duration.setText(calculateDuration(startDate, endDate));
+        eventHolder.type.setText(cursor.getString(cursor.getColumnIndex(DataContract.Event.TYPE)));
+
+        setColour(row, cursor.getString(cursor.getColumnIndex(DataContract.Event.TYPE)));
     }
 
     private String calculateDuration(Date sDate, Date eDate) {
@@ -67,6 +81,6 @@ public class EventCursorAdapter extends CursorAdapter {
     }
 
     static class EventHolder {
-        TextView title, description, startDate, duration;
+        TextView title, description, startDate, duration, type;
     }
 }

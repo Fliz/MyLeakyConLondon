@@ -3,6 +3,7 @@ package com.myleakyconlondon.util;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -61,7 +62,7 @@ public class ValidationHelper {
 
     public boolean validateEvent(String title, String startDate, String endDate)
     {
-        if(isTitleValid(title))   {
+        if(isTitleValid(title) && areDatesValid(startDate, endDate))   {
             return true;
         }
         return false;
@@ -69,10 +70,30 @@ public class ValidationHelper {
 
     private boolean isTitleValid(String title) {
 
-        if(title == null || title == "") {
+        if(title == null || title.equals("")) {
             messages.add("Title is required");
             return false;
         }
         return true;
+    }
+
+    private boolean areDatesValid(String start, String end) {
+
+        Date startDate = new Date(Long.parseLong(start));
+        Date endDate = new Date(Long.parseLong(end));
+
+        if(startDate.after(endDate)) {
+            messages.add("Event must start before it ends!");
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isTimeProvided(String time) {
+
+        if(!time.equals("Set Start Time") && !time.equals("Set End Time")){
+            return true;
+        }
+        return false;
     }
 }

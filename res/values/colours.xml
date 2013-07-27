@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="LightRed">#F3827F</color>
+    <color name="LightOrange">#FFBC57</color>
+    <color name="LightYellowOrange">#FBAF5C</color>
+    <color name="CyanBlue">#0072BC</color>
+    <color name="LightPeaGreen">#9EDF7D</color>
+    <color name="LightYellow">#FFFD67</color>
+    <color name="LightGreen">#3BB878</color>
+    <color name="LightGreenCyan">#3BB878</color>
+    <color name="LightCyan">#00BFF3</color>
+    <color name="LightCyanBlue">#66F6CF</color>
+    <color name="LightBlue">#B7CDFF</color>
+    <color name="LightBlueViolet">#605CA8</color>
+    <color name="LightViolet">#855FA8</color>
+    <color name="LightVioletMagenta">#A763A8</color>
+    <color name="LightMagenta">#F06EA9</color>
+    <color name="LightMagentaRed">#F26D7D</color>
+    <color name="Cream">#FFFDD0</color>
+    <color name="Gold">#DA9100</color>
+    <color name="Pink">#EFC8FE</color>
+    <color name="Black">#000000</color>
+</resources>
