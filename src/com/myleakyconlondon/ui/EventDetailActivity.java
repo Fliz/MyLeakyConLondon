@@ -1,8 +1,11 @@
 package com.myleakyconlondon.ui;
 
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.widget.Button;
+import android.widget.ToggleButton;
 import com.myleakyconlondon.util.DateHelper;
 
 /**
@@ -10,13 +13,28 @@ import com.myleakyconlondon.util.DateHelper;
  * Date: 15/06/13
  * Time: 10:11
  */
-public class EventDetailActivity extends FragmentActivity implements TimePickerFragment.OnTimeSelectedListener, DatePickerFragment.OnDateSelectedListener {
+public class EventDetailActivity extends FragmentActivity implements TimePickerFragment.OnTimeSelectedListener, DatePickerFragment.OnDateSelectedListener, ConfirmDeleteFragment.NoticeDialogListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.event_details);
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+
+        ToggleButton delete = (ToggleButton)findViewById(R.id.delete_event);
+        delete.setChecked(true);
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+
+        ToggleButton delete = (ToggleButton)findViewById(R.id.delete_event);
+        delete.setChecked(false);
+
     }
 
     @Override

@@ -59,9 +59,7 @@ public class DayCursorAdapter extends CursorAdapter {
         dateView.setText(DateHelper.formatDate(date));
         DayHolder day = new DayHolder(dateView);
 
-        CheckBox box = (CheckBox) row.findViewById(R.id.chkDay);
         int dayId = cursor.getColumnIndex(DataContract.Day.DAY_ID);
         day.setDayId(dayId);
-        day.setChecked(box.isChecked());
     }
 }

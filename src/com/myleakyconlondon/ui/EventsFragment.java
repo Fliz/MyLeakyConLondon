@@ -186,7 +186,6 @@ public class EventsFragment extends Fragment implements AdapterView.OnItemSelect
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-         //todo implement
     }
 
     public interface OnEventSelectedListener {

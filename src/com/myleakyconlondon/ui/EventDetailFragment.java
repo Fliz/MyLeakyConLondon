@@ -186,6 +186,16 @@ public class EventDetailFragment extends Fragment {
                 eventSave();
             }
         });
+
+        ToggleButton delete = (ToggleButton) view.findViewById(R.id.delete_event);
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+
+                DialogFragment newFragment = new ConfirmDeleteFragment();
+                newFragment.show(getActivity().getSupportFragmentManager(), "deleteConfirm");
+            }
+        });
     }
 
     public void eventSave() {

@@ -11,7 +11,6 @@ public class DayHolder {
 
     TextView date;
     int dayId;
-    boolean isChecked;
 
     public TextView getDate() {
         return date;
@@ -27,16 +26,6 @@ public class DayHolder {
 
     public void setDayId(int dayId) {
         this.dayId = dayId;
-    }
-
-
-
-    public boolean isChecked() {
-        return isChecked;
-    }
-
-    public void setChecked(boolean checked) {
-        isChecked = checked;
     }
 
     public DayHolder(TextView date) {

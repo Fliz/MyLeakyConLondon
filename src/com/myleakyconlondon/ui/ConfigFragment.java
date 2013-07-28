@@ -2,6 +2,7 @@ package com.myleakyconlondon.ui;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -18,7 +19,6 @@ import android.widget.*;
 import com.myleakyconlondon.adapter.DayCursorAdapter;
 import com.myleakyconlondon.dao.DataContract;
 import com.myleakyconlondon.dao.DaysProvider;
-import com.myleakyconlondon.dao.EventProvider;
 import com.myleakyconlondon.model.*;
 import com.myleakyconlondon.util.DateHelper;
 import com.myleakyconlondon.util.ValidationHelper;
@@ -30,11 +30,12 @@ import java.util.List;
  * Date: 23/06/13
  * Time: 17:31
  */
-public class ConfigFragment extends Fragment implements AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor>, ConfirmDeleteFragment.NoticeDialogListener {
+public class ConfigFragment extends Fragment implements AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private OnDaySelectedListener daySelectedListener;
     private DayCursorAdapter dayCursorAdapter;
-    private Button save, add, delete;
+    private Button save, add;
+    private TextView dayNumber;
     private View view;
 
     @Override
@@ -45,36 +46,9 @@ public class ConfigFragment extends Fragment implements AdapterView.OnItemSelect
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        Button date = (Button) view.findViewById(R.id.addDay);
-        EditText dayNumber = (EditText) view.findViewById(R.id.dayNumber);
-
-        outState.putString("dayNumber", dayNumber.getText().toString());
-
-        if(!date.getText().toString().trim().equals("Add New Day"))  {
-            outState.putCharSequence("date", date.getText());
-        }
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
 
         super.onActivityCreated(savedInstanceState);
-
-        if(savedInstanceState != null) {
-
-            Button date = (Button) view.findViewById(R.id.addDay);
-            EditText dayNumber = (EditText) view.findViewById(R.id.dayNumber);
-
-            if(savedInstanceState.containsKey("date")) {
-                date.setText(savedInstanceState.getCharSequence("date"));
-                Log.i("fix", "date " + date.getText().toString());
-                Log.i("fix", " day "  + dayNumber.getText().toString());
-            }
-            dayNumber.setText(savedInstanceState.getString("dayNumber"));
-        }
     }
 
     @Override
@@ -86,8 +60,8 @@ public class ConfigFragment extends Fragment implements AdapterView.OnItemSelect
         setUpDayList(dayList);
 
         save = (Button) view.findViewById(R.id.saveConfig);
-        delete = (Button) view.findViewById(R.id.deleteDays);
         add = (Button) view.findViewById(R.id.addDay);
+        dayNumber = (TextView) view.findViewById(R.id.dayNumber);
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,16 +79,11 @@ public class ConfigFragment extends Fragment implements AdapterView.OnItemSelect
             }
         });
 
-        delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                delete();
-            }
-        });
-
-       //todo set on click for day list
-
         return view;
+    }
+
+    private String getDayNumberDefault() {
+        return Integer.toString(dayCursorAdapter.getCount() + 1);
     }
 
     @Override
@@ -129,6 +98,13 @@ public class ConfigFragment extends Fragment implements AdapterView.OnItemSelect
         dayList.setAdapter(dayCursorAdapter);
 
         dayList.setOnItemClickListener(this);
+
+        dayList.post(new Runnable() {
+            @Override
+            public void run() {
+                dayNumber.setText(getDayNumberDefault());
+            }
+        });
     }
 
     @Override
@@ -167,14 +143,9 @@ public class ConfigFragment extends Fragment implements AdapterView.OnItemSelect
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-
-        //todo dialog. followed by delete action
-        //todo checkbox checked
+           Log.i("fix", "I am selected");
         final Day selectedDay = DayHelper.cursorToDay((Cursor) adapterView.getItemAtPosition(position));
         daySelectedListener.onDaySelected(selectedDay);
-
-       // DialogFragment dialog = new ConfirmDeleteFragment();
-       // dialog.show(getActivity().getSupportFragmentManager(), "NoticeDialogFragment");
     }
 
     @Override
@@ -200,6 +171,9 @@ public class ConfigFragment extends Fragment implements AdapterView.OnItemSelect
            getActivity().getContentResolver().insert(DaysProvider.CONTENT_URI, values);
            clearForm(date, dayNumber);
 
+           Intent intent = new Intent(getActivity(), LeakyConLondonScheduleActivity.class);
+           startActivity(intent);
+
         } else {
             List<String> messages = validation.getMessages();
 
@@ -215,62 +189,14 @@ public class ConfigFragment extends Fragment implements AdapterView.OnItemSelect
          dayNumber.setText("");
     }
 
-    private void delete() {
-
-        //todo delete
-        Log.i("fix", " hmm");
-
-        for(int i = 0; i < dayCursorAdapter.getCount(); i++)  {
-            Day day = DayHelper.cursorToDay((Cursor)dayCursorAdapter.getItem(i));
-
-            //todo delete on click
-            Log.i("fix", " row " + day.getDayNumber());
-
-
-         // Log.i("fix", " the tag " + day.isChecked() + " " + day.getDayId());
-        }
-    }
-
     private ContentValues getDayValues(String date, String dayNumber) {
 
-        //todo validate is int
         ContentValues values = new ContentValues();
 
         values.put(DataContract.Day.DATE, DateHelper.getDateInMillis(date + " 00:00"));
         values.put(DataContract.Day.DAY_NUMBER, Integer.parseInt(dayNumber));
         return values;
     }
-
-
-    private void deleteDay() {
-
-        int selectedDayNumber= 0;
-        deleteAssociatedEvents(selectedDayNumber);
-
-        //todo set day number
-        getActivity().getContentResolver().delete(DaysProvider.CONTENT_URI, DataContract.Day.DAY_ID + " = " + selectedDayNumber, null);
-        Log.i("Info", "Deleting day " + selectedDayNumber);
-    }
-
-    private void deleteAssociatedEvents(int selectedDayNumber) {
-
-        getActivity().getContentResolver().delete(EventProvider.CONTENT_URI, DataContract.Event.DAY_ID + " = " + selectedDayNumber, null);
-        Log.i("Info", "Deleting events for " + selectedDayNumber);
-    }
-
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        // User touched the dialog's positive button
-        Log.i("Info", "confirm delete");
-
-    }
-
-    @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
-        // User touched the dialog's negative button
-        Log.i("Info", "cance; delete");
-    }
-
 
     public interface OnDaySelectedListener {
         public void onDaySelected(Day selectedDay);

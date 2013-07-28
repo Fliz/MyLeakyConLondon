@@ -30,8 +30,7 @@ public class ConfirmDeleteFragment extends DialogFragment {
             mListener = (NoticeDialogListener) activity;
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
-            throw new ClassCastException(activity.toString()
-                    + " must implement NoticeDialogListener");
+            throw new ClassCastException(activity.toString() + " must implement NoticeDialogListener");
         }
     }
 

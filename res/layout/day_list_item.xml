@@ -14,11 +14,6 @@
             android:gravity="left"
             android:orientation="horizontal"
             android:paddingTop="15dp" >
-    <CheckBox
-            android:id="@+id/chkDay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"/>
 
     <TextView
             android:id="@+id/day_text"
@@ -26,6 +21,14 @@
             android:layout_height="wrap_content"
             android:textSize="17sp"
             android:paddingLeft="10dp"/>
+
+    <TextView
+            android:id="@+id/day_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:paddingLeft="10dp"
+            android:text="  - (Click to delete)"/>
         </LinearLayout>
 
 

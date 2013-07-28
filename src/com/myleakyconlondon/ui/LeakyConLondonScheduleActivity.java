@@ -120,9 +120,11 @@ public class LeakyConLondonScheduleActivity extends FragmentActivity implements 
         mTabHost = (TabHost)findViewById(android.R.id.tabhost);
         mTabHost.setup();
         TabInfo tabInfo = null;
+        int dayCount = 0;
 
         for(int day : days) {
-            LeakyConLondonScheduleActivity.AddTab(this, this.mTabHost, this.mTabHost.newTabSpec("tab" + day).setIndicator("Day " + day), (tabInfo = new TabInfo("tab" + day, EventsFragment.class, args)));
+            dayCount++;
+            LeakyConLondonScheduleActivity.AddTab(this, this.mTabHost, this.mTabHost.newTabSpec("tab" + day).setIndicator("Day " + dayCount), (tabInfo = new TabInfo("tab" + day, EventsFragment.class, args)));
 
             this.mapTabInfo.put(tabInfo.tag, tabInfo);
         }

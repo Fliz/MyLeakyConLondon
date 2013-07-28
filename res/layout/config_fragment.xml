@@ -35,11 +35,5 @@
                 android:layout_width="wrap_content"
                 android:text="@string/save_config"
                 android:onClick="saveConfig" />
-    <Button
-            android:id="@+id/deleteDays"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="@string/delete_days"
-            android:onClick="deleteDays" />
 
     </LinearLayout>
